@@ -12,7 +12,7 @@ El sistema permite la gestión de usuarios, especialistas y reservas, con flujos
 
 El proyecto está estructurado siguiendo un enfoque modular en el backend y una arquitectura organizada para facilitar su mantenimiento y evolución.
 
-🚀 Live Demo: [🔗 reservas.jorgelizancandela.com](https://reservas.jorgelizancandela.com)
+🚀 Live Demo: [🔗 [proyecto-render-6w0d.onrender.com](https://proyecto-render-6w0d.onrender.com/)
 
 ## 🎨 Preview
 
