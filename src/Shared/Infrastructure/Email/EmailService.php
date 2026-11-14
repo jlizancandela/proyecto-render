@@ -18,17 +18,11 @@ class EmailService
 
     /**
      * Email service constructor
-     *
-     * @throws \RuntimeException If environment variables are missing
      */
     public function __construct()
     {
         $this->apiKey = $_ENV['EMAIL_API_KEY'] ?? '';
         $this->senderEmail = $_ENV['EMAIL_SENDER'] ?? '';
-
-        if (empty($this->apiKey) || empty($this->senderEmail)) {
-            throw new \RuntimeException('Missing email configurations in .env');
-        }
     }
 
     /**
@@ -38,13 +32,16 @@ class EmailService
      * @param string $subject Email subject
      * @param string $htmlContent HTML content of the email
      * @return array API response
-     * @throws \RuntimeException If sending fails
      */
     public function sendEmail(
         string $to,
         string $subject,
         string $htmlContent
     ): array {
+        if (empty($this->apiKey) || empty($this->senderEmail)) {
+            error_log('Missing email configurations in .env. Email skipped for: ' . $to);
+            return ['status' => 'skipped', 'message' => 'Email service not configured'];
+        }
         $data = [
             'sender' => [
                 'email' => $this->senderEmail

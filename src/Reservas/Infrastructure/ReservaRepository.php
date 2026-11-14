@@ -686,13 +686,15 @@ class ReservaRepository
                 INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
                 WHERE r.id_cliente = :userId
                 AND r.estado IN ('Pendiente', 'Confirmada', 'Pagada')
-                AND TIMESTAMP(r.fecha_reserva, r.hora_inicio) >= NOW()
+                AND (r.fecha_reserva > :currentDate OR (r.fecha_reserva = :currentDate AND r.hora_inicio >= :currentTime))
                 ORDER BY r.fecha_reserva ASC, r.hora_inicio ASC
                 LIMIT 1
             ";
 
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmt->bindValue(':currentDate', date('Y-m-d'));
+            $stmt->bindValue(':currentTime', date('H:i:s'));
             $stmt->execute();
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -23,10 +23,7 @@ class Database
      */
     public function __construct()
     {
-        $host = $_ENV["DB_HOST"] ?? "localhost";
-        $dbname = $_ENV["DB_NAME"] ?? "sistema_reservas";
-        $user = $_ENV["DB_USER"] ?? "root";
-        $password = $_ENV["DB_PASSWORD"] ?? "";
+        $connection = strtolower($_ENV["DB_CONNECTION"] ?? "sqlite");
 
         try {
             $options = [
@@ -35,8 +32,20 @@ class Database
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
 
-            $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
-            $this->db = new PDO($dsn, $user, $password, $options);
+            if ($connection === "mysql") {
+                $host = $_ENV["DB_HOST"] ?? "localhost";
+                $dbname = $_ENV["DB_NAME"] ?? "sistema_reservas";
+                $user = $_ENV["DB_USER"] ?? "root";
+                $password = $_ENV["DB_PASSWORD"] ?? "";
+
+                $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
+                $this->db = new PDO($dsn, $user, $password, $options);
+            } else {
+                $sqlitePath = $_ENV["DB_SQLITE_PATH"] ?? (__DIR__ . "/../../../../database/database.sqlite");
+                $dsn = "sqlite:" . $sqlitePath;
+                $this->db = new PDO($dsn, null, null, $options);
+                $this->db->exec("PRAGMA foreign_keys = ON;");
+            }
         } catch (PDOException $e) {
             throw new \Exception("Connection failed: " . $e->getMessage());
         }

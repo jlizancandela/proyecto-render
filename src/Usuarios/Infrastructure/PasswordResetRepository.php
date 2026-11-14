@@ -58,10 +58,13 @@ class PasswordResetRepository
         $stmt = $this->db->prepare(
             "SELECT * FROM USUARIO
             WHERE reset_token = :token
-            AND reset_expiration > NOW()"
+            AND reset_expiration > :now"
         );
 
-        $stmt->execute([':token' => $token]);
+        $stmt->execute([
+            ':token' => $token,
+            ':now' => date('Y-m-d H:i:s')
+        ]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $row ? Usuario::fromDatabase($row) : null;
